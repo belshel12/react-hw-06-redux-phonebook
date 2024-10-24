@@ -1,13 +1,15 @@
-import { Formik } from 'formik';
-import * as Yup from 'yup';
+import { useDispatch } from "react-redux";
+import { addContact } from "../../redux/store";
+import { Formik } from "formik";
+import * as Yup from "yup";
 import {
   Form,
   FormField,
   Field,
   ErrorMessage,
   Button,
-} from './ContactForm.styled';
-import { nanoid } from '@reduxjs/toolkit';
+} from "./ContactForm.styled";
+import { nanoid } from "@reduxjs/toolkit";
 
 let ContactFormSchema = Yup.object().shape({
   name: Yup.string()
@@ -15,32 +17,31 @@ let ContactFormSchema = Yup.object().shape({
       /^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$/,
       "Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
     )
-    .min(2, 'Too Short!')
-    .required('Required'),
+    .min(2, "Too Short!")
+    .required("Required"),
 
   number: Yup.string()
     .matches(
       /\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}/,
-      'Phone number must be digits and can contain spaces, dashes, parentheses and can start with +'
+      "Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
     )
-    .min(8, 'Too Short!')
-    .max(17, 'Too Long!')
-    .required('Required'),
+    .min(8, "Too Short!")
+    .max(17, "Too Long!")
+    .required("Required"),
 });
 
-const ContactForm = ({ onSubmit }) => {
+const ContactForm = () => {
+  const dispatch = useDispatch();
+  const handleSubmit = (data) => dispatch(addContact(data));
   return (
     <Formik
       initialValues={{
-        name: '',
-        number: '',
+        name: "",
+        number: "",
       }}
       validationSchema={ContactFormSchema}
       onSubmit={(values, actions) => {
-        onSubmit({
-          ...values,
-          id: nanoid(),
-        });
+        handleSubmit({ ...values, id: nanoid() });
         actions.resetForm();
       }}
     >
